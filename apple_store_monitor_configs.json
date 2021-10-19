@@ -1,0 +1,18 @@
+{
+  "selected_products": {
+    "MGYJ3CH/A": [
+      "AirPods Max",
+      "AirPods Max - \u94f6\u8272"
+    ],
+    "MLHG3CH/A": [
+      "iPhone 13 Pro Max",
+      "512GB \u8fdc\u5cf0\u84dd\u8272"
+    ]
+  },
+  "selected_area": "\u4e0a\u6d77 \u4e0a\u6d77 \u9ec4\u6d66\u533a",
+  "dingtalk_configs": {
+    "access_token": "",
+    "secret_key": ""
+  },
+  "scan_interval": 30
+}
