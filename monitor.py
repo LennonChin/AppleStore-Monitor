@@ -230,7 +230,6 @@ class AppleStoreMonitor:
                 Utils.send_dingtalk_message(dingtalk_configs,
                                             Utils.time_title("第{}次扫描出现异常：{}".format(self.count, repr(err))))
 
-            self.count += 1
             if len(available_list) == 0:
                 interval = max(random.randint(int(scan_interval / 2), scan_interval * 2), 5)
                 Utils.message('{}秒后进行第{}次尝试...'.format(interval, self.count))
@@ -244,6 +243,9 @@ class AppleStoreMonitor:
                 time.sleep(interval)
             else:
                 time.sleep(5)
+
+            # 次数自增
+            self.count += 1
 
 
 if __name__ == '__main__':
