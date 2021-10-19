@@ -6,6 +6,11 @@
 
 本项目在iPhone-Pickup-Monitor原有功能的基础上去掉了声音通知，但添加了多货源同时监控以及钉钉消息通知功能。
 
+# 最近更新
+
+- [x] 增加Telegram bot机器人群发功能，感谢[zsm1703](https://github.com/zsm1703)。[【PR #1】](https://github.com/LennonChin/AppleStore-Monitor/pull/1)
+- [x] 将异常事件的提醒限制在6:00 ~ 23:00期间。
+
 # 安装
 
 ```bash
@@ -28,6 +33,10 @@ pip install -r requirements.txt
 [自定义机器人接入](https://developers.dingtalk.com/document/robots/custom-robot-access?spm=ding_open_doc.document.0.0.62846573euH8Cn#topic-2026027)
 
 机器人配置完毕后，记下相关的Access Token和Secret Key，后面配置时需要用到。
+
+# 申请Telegram群机器人
+
+Telegram bot群发功能已添加了，文档暂空。留给有需求的同学自己补充。
 
 # 开始配置
 
@@ -69,19 +78,25 @@ $> python monitor.py config
 [0] 北京
 [1] 上海
 ...
-请选择序号：1
+请选择地区序号：1
 请稍后...2/3
 请稍后...3/3
 --------------------
 [0] 黄浦区
 ...
-请选择序号：0
+请选择地区序号：0
 正在加载网络资源...
+选择的计划预约的地址是：上海 上海 黄浦区
 --------------------
-输入钉钉机器人Access Token[如不配置直接回车即可]：# 此处如不配置，就没有通知功能
-输入钉钉机器人Secret Key[如不配置直接回车即可]：# 此处如不配置，就没有通知功能
+输入钉钉机器人Access Token[如不配置直接回车即可]： # 此处如不配置，就没有通知功能
+输入钉钉机器人Secret Key[如不配置直接回车即可]： # 此处如不配置，就没有通知功能
 --------------------
-输入扫描间隔时间[以秒为单位，默认为15秒，如不配置直接回车即可]：30 # 不建议太短，以免扫描过于频繁导致IP被封
+输入Telegram机器人Token[如不配置直接回车即可]： # 此处如不配置，就没有通知功能
+输入Telegram机器人Chat ID[如不配置直接回车即可]： # 此处如不配置，就没有通知功能
+输入Telegram HTTP代理地址[如不配置直接回车即可]：
+--------------------
+输入扫描间隔时间[以秒为单位，默认为30秒，如不配置直接回车即可]： # 不建议太短，以免扫描过于频繁导致IP被封
+--------------------
 扫描配置已生成，并已写入到apple_store_monitor_configs.json文件中
 请使用 python monitor.py start 命令启动监控
 ```
@@ -101,9 +116,16 @@ $> python monitor.py config
     ]
   },
   "selected_area": "\u4e0a\u6d77 \u4e0a\u6d77 \u9ec4\u6d66\u533a",
-  "dingtalk_configs": {
-    "access_token": "",
-    "secret_key": ""
+  "notification_configs": {
+    "dingtalk": {
+      "access_token": "",
+      "secret_key": ""
+    },
+    "telegram": {
+      "bot_token": "",
+      "chat_id": "",
+      "http_proxy": ""
+    }
   },
   "scan_interval": 30
 }

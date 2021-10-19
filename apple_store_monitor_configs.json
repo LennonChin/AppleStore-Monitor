@@ -10,9 +10,16 @@
     ]
   },
   "selected_area": "\u4e0a\u6d77 \u4e0a\u6d77 \u9ec4\u6d66\u533a",
-  "dingtalk_configs": {
-    "access_token": "",
-    "secret_key": ""
+  "notification_configs": {
+    "dingtalk": {
+      "access_token": "",
+      "secret_key": ""
+    },
+    "telegram": {
+      "bot_token": "",
+      "chat_id": "",
+      "http_proxy": ""
+    }
   },
   "scan_interval": 30
 }
