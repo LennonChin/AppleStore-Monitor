@@ -162,4 +162,6 @@ $> nohup python -u monitor.py start > monitor.log 2>&1 &
 
 相关通知截图：
 
-![NotificationExample.png](https://github.com/LennonChin/AppleStore-Monitor/blob/main/NotificationExample.png)
+![DingTalkNotification](https://github.com/LennonChin/AppleStore-Monitor/blob/main/docs/DingTalkNotification.png)
+
+![TelegramNotification](https://github.com/LennonChin/AppleStore-Monitor/blob/main/docs/TelegramNotification.png)

@@ -61,8 +61,6 @@ class Utils:
             "sign": sign
         }
 
-
-
         content = {
             "msgtype": "text" if "message_type" not in kwargs else kwargs["message_type"],
             "text": {
