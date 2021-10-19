@@ -59,6 +59,17 @@ class Utils:
 
         requests.post("https://oapi.dingtalk.com/robot/send", headers=headers, params=params, json=content)
 
+    @staticmethod
+    def send_telegram_message(telegram_configs, message):
+        if len(telegram_configs["bot_token"]) == 0 or len(telegram_configs["chat_id"]) == 0 or len(message) == 0:
+            return
+        proxies = {
+            "https": telegram_configs["http_proxy"],
+        }
+
+        telegram_url = "https://api.telegram.org/bot" + telegram_configs["bot_token"] + "/sendMessage" + "?chat_id=" + telegram_configs["chat_id"] + "&text=" + message
+        requests.get(telegram_url, proxies=proxies)
+
 
 class AppleStoreMonitor:
     headers = {
@@ -84,6 +95,7 @@ class AppleStoreMonitor:
             "selected_products": {},
             "selected_area": "",
             "dingtalk_configs": {},
+            "telegram_configs": {},
             "scan_interval": 30
         }
         while True:
@@ -145,12 +157,24 @@ class AppleStoreMonitor:
         dingtalk_access_token = input('输入钉钉机器人Access Token[如不配置直接回车即可]：')
         dingtalk_secret_key = input('输入钉钉机器人Secret Key[如不配置直接回车即可]：')
 
+        # config telegram notification
+        print('--------------------')
+        telegram_bot_token = input('输入Telegram机器人Token[如不配置直接回车即可]：')
+        telegram_chat_id = input('输入Telegram机器人Chat ID[如不配置直接回车即可]：')
+
+        # config proxy settings
+        print('--------------------')
+        http_proxy = input('输入http代理地址[如不配置直接回车即可]：')
         # 输入扫描间隔时间
         print('--------------------')
         scan_interval = int(input('输入扫描间隔时间[以秒为单位，默认为15秒，如不配置直接回车即可]：') or 30)
-
+        # write dingtalk configs
         configs["dingtalk_configs"]["access_token"] = dingtalk_access_token
         configs["dingtalk_configs"]["secret_key"] = dingtalk_secret_key
+        # write telegram configs
+        configs["telegram_configs"]["bot_token"] = telegram_bot_token
+        configs["telegram_configs"]["chat_id"] = telegram_chat_id
+        configs["telegram_configs"]["http_proxy"] = http_proxy
         configs["scan_interval"] = scan_interval
 
         with open('apple_store_monitor_configs.json', 'w', encoding="utf-8") as file:
@@ -165,6 +189,7 @@ class AppleStoreMonitor:
         selected_products = configs["selected_products"]
         selected_area = configs["selected_area"]
         dingtalk_configs = configs["dingtalk_configs"]
+        telegram_configs = configs["telegram_configs"]
         scan_interval = configs["scan_interval"]
 
         products_info = []
@@ -173,6 +198,7 @@ class AppleStoreMonitor:
         message = "准备开始监测，商品信息如下：\n{}\n取货区域：{}\n扫描频次：{}秒/次".format("\n".join(products_info), selected_area, scan_interval)
         Utils.message(message)
         Utils.send_dingtalk_message(dingtalk_configs, message)
+        Utils.send_telegram_message(telegram_configs, message)
 
         params = {
             "location": selected_area,
@@ -224,10 +250,14 @@ class AppleStoreMonitor:
 
                     Utils.send_dingtalk_message(dingtalk_configs,
                                                 Utils.time_title("第{}次扫描到直营店有货，信息如下：\n{}".format(self.count, "\n".join(messages))))
+                    Utils.send_telegram_message(telegram_configs,
+                                                Utils.time_title("第{}次扫描到直营店有货，信息如下：\n{}".format(self.count, "\n".join(messages))))
 
             except Exception as err:
                 Utils.message(err)
                 Utils.send_dingtalk_message(dingtalk_configs,
+                                            Utils.time_title("第{}次扫描出现异常：{}".format(self.count, repr(err))))
+                Utils.send_telegram_message(telegram_configs,
                                             Utils.time_title("第{}次扫描出现异常：{}".format(self.count, repr(err))))
 
             if len(available_list) == 0:
@@ -238,6 +268,8 @@ class AppleStoreMonitor:
                 tm_hour = time.localtime(time.time()).tm_hour
                 if last_exactly_time != tm_hour and (6 <= tm_hour <= 23):
                     Utils.send_dingtalk_message(dingtalk_configs,
+                                                Utils.time_title("已扫描{}次，扫描程序运行正常".format(self.count)))
+                    Utils.send_telegram_message(telegram_configs,
                                                 Utils.time_title("已扫描{}次，扫描程序运行正常".format(self.count)))
                     last_exactly_time = tm_hour
                 time.sleep(interval)
