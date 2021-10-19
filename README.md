@@ -34,7 +34,7 @@ pip install -r requirements.txt
 可以配置多个监控商品：
 
 ```bash
-$> python /User/LennonChin/Codes/AppleStore-Monitor/monitor.py config
+$> python monitor.py config
 --------------------
 [0] AirPods
 [1] iPhone 13
@@ -83,7 +83,7 @@ $> python /User/LennonChin/Codes/AppleStore-Monitor/monitor.py config
 --------------------
 输入扫描间隔时间[以秒为单位，默认为15秒，如不配置直接回车即可]：30 # 不建议太短，以免扫描过于频繁导致IP被封
 扫描配置已生成，并已写入到apple_store_monitor_configs.json文件中
-请使用 python /User/LennonChin/Codes/AppleStore-Monitor/monitor.py start 命令启动监控
+请使用 python monitor.py start 命令启动监控
 ```
 
 配置完成后，会在当前目录下生成一个[apple_store_monitor_configs.json](https://github.com/LennonChin/AppleStore-Monitor/blob/main/apple_store_monitor_configs.json)文件：
@@ -120,7 +120,7 @@ $> python /User/LennonChin/Codes/AppleStore-Monitor/monitor.py config
 比如前台启动：
 
 ```bash
-$> python /User/LennonChin/Codes/AppleStore-Monitor/monitor.py start
+$> python monitor.py start
 ```
 
 或者后台启动：
