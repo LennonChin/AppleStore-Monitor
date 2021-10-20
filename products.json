@@ -1,4 +1,15 @@
 {
+  "Apple Watch": {
+    "Apple Watch Series 7": {
+      "MKJP3CH/A": "(GPS + 蜂窝网络)；45 毫米午夜色铝金属表壳；午夜色运动型表带 - 标准号",
+      "MKJT3CH/A": "(GPS + 蜂窝网络)；45 毫米蓝色铝金属表壳；深邃蓝色运动型表带 - 标准号",
+      "MKJQ3CH/A": "(GPS + 蜂窝网络)；45 毫米星光色铝金属表壳；星光色运动型表带 - 标准号"
+    },
+    "Apple Watch Nike Series 7": {
+      "MKL53CH/A": "(GPS + 蜂窝网络)；45 毫米午夜色铝金属表壳；煤黑配黑色 Nike 运动表带 - 标准号",
+      "MKL43CH/A": "(GPS + 蜂窝网络)；45 毫米星光色铝金属表壳；白金配黑色 Nike 运动表带 - 标准号"
+    }
+  },
   "AirPods": {
     "AirPods": {
       "MV7N2CH/A": "AirPods (第二代)"

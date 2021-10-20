@@ -117,11 +117,13 @@ class AppleStoreMonitor:
         configs = {
             "selected_products": {},
             "selected_area": "",
+            "exclude_stores": [],
             "notification_configs": {
                 "dingtalk": {},
                 "telegram": {}
             },
-            "scan_interval": 30
+            "scan_interval": 30,
+            "alert_exception": False
         }
         while True:
             # chose product type
@@ -176,7 +178,24 @@ class AppleStoreMonitor:
                                 params=choice_params)
         selected_area = json.loads(response.text)['body']['provinceCityDistrict']
         configs["selected_area"] = selected_area
-        print("选择的计划预约的地址是：{}".format(selected_area))
+
+        print('--------------------')
+        print("选择的计划预约的地址是：{}，加载预约地址周围的直营店...".format(selected_area))
+
+        store_params = {
+            "location": selected_area,
+            "parts.0": list(configs["selected_products"].keys())[0]
+        }
+        response = requests.get("https://www.apple.com.cn/shop/fulfillment-messages",
+                                headers=AppleStoreMonitor.headers, params=store_params)
+
+        stores = json.loads(response.text)['body']["content"]["pickupMessage"]["stores"]
+        for index, store in enumerate(stores):
+            print("[{}] {}，地址：{}".format(index, store["storeName"], store["retailStore"]["address"]["street"]))
+
+        exclude_stores_indexes = input('排除无需监测的直营店，输入序号[直接回车代表全部监测，多个店的序号以空格分隔]：').split(" ")
+        print("已选择的无需监测的直营店：{}".format("，".join(list(map(lambda i: stores[int(i)]["storeName"], exclude_stores_indexes)))))
+        configs["exclude_stores"] = list(map(lambda i: stores[int(i)]["storeNumber"], exclude_stores_indexes))
 
         print('--------------------')
         # config notification configurations
@@ -203,8 +222,11 @@ class AppleStoreMonitor:
 
         # 输入扫描间隔时间
         print('--------------------')
-        scan_interval = int(input('输入扫描间隔时间[以秒为单位，默认为30秒，如不配置直接回车即可]：') or 30)
-        configs["scan_interval"] = scan_interval
+        configs["scan_interval"] = int(input('输入扫描间隔时间[以秒为单位，默认为30秒，如不配置直接回车即可]：') or 30)
+
+        # 是否对异常进行告警
+        print('--------------------')
+        configs["alert_exception"] = (input('是否在程序异常时发送通知[Y/n，默认为n]：').lower().strip() or "n") == "y"
 
         with open('apple_store_monitor_configs.json', 'w') as file:
             json.dump(configs, file, indent=2)
@@ -218,8 +240,10 @@ class AppleStoreMonitor:
         configs = json.load(open('apple_store_monitor_configs.json', encoding='utf-8'))
         selected_products = configs["selected_products"]
         selected_area = configs["selected_area"]
+        exclude_stores = configs["exclude_stores"]
         notification_configs = configs["notification_configs"]
         scan_interval = configs["scan_interval"]
+        alert_exception = configs["alert_exception"]
 
         products_info = []
         for index, product_info in enumerate(selected_products.items()):
@@ -260,12 +284,15 @@ class AppleStoreMonitor:
                         self.count + 1))
                 for item in stores:
                     store_name = item['storeName']
-                    print("-------------------- 直营店： {} --------------------".format(store_name))
+                    if item["storeNumber"] in exclude_stores:
+                        print("【{}：已排除】".format(store_name))
+                        continue
+                    print("{:-<100}".format("【{}】".format(store_name)))
                     for product_code in product_codes:
                         pickup_search_quote = item['partsAvailability'][product_code]['pickupSearchQuote']
                         pickup_display = item['partsAvailability'][product_code]['pickupDisplay']
                         store_pickup_product_title = item['partsAvailability'][product_code]['storePickupProductTitle']
-                        print('【{}】{}'.format(pickup_search_quote, store_pickup_product_title))
+                        print('\t【{}】{}'.format(pickup_search_quote, store_pickup_product_title))
                         if pickup_search_quote == '今天可取货' or pickup_display != 'unavailable':
                             available_list.append((store_name, product_code, store_pickup_product_title))
 
@@ -279,14 +306,15 @@ class AppleStoreMonitor:
                     print("命中货源，请注意 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
                     Utils.send_message(notification_configs,
-                                       Utils.time_title("第{}次扫描到直营店有货，信息如下：\n{}".format(self.count, "\n".join(messages))))
+                                       Utils.time_title(
+                                           "第{}次扫描到直营店有货，信息如下：\n{}".format(self.count, "\n".join(messages))))
 
             except Exception as err:
                 Utils.log(err)
                 # 6:00 ~ 23:00才发送异常消息
-                if 6 <= tm_hour <= 23:
+                if alert_exception and 6 <= tm_hour <= 23:
                     Utils.send_message(notification_configs,
-                                   Utils.time_title("第{}次扫描出现异常：{}".format(self.count, repr(err))))
+                                       Utils.time_title("第{}次扫描出现异常：{}".format(self.count, repr(err))))
 
             if len(available_list) == 0:
                 interval = max(random.randint(int(scan_interval / 2), scan_interval * 2), 5)

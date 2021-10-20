@@ -2,14 +2,21 @@
   "selected_products": {
     "MGYJ3CH/A": [
       "AirPods Max",
-      "AirPods Max - \u94f6\u8272"
+      "AirPods Max - 银色"
     ],
     "MLHG3CH/A": [
       "iPhone 13 Pro Max",
-      "512GB \u8fdc\u5cf0\u84dd\u8272"
+      "512GB 远峰蓝色"
     ]
   },
-  "selected_area": "\u4e0a\u6d77 \u4e0a\u6d77 \u9ec4\u6d66\u533a",
+  "selected_area": "上海 上海 黄浦区",
+  "exclude_stores": [
+    "R688",
+    "R574",
+    "R531",
+    "R532",
+    "R471"
+  ],
   "notification_configs": {
     "dingtalk": {
       "access_token": "",
@@ -21,5 +28,6 @@
       "http_proxy": ""
     }
   },
-  "scan_interval": 30
+  "scan_interval": 30,
+  "alert_exception": false
 }
