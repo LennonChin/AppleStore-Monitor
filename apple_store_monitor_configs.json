@@ -26,6 +26,10 @@
       "bot_token": "",
       "chat_id": "",
       "http_proxy": ""
+    },
+    "bark": {
+      "url": "",
+      "id": ""
     }
   },
   "scan_interval": 30,

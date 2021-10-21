@@ -33,6 +33,8 @@ class Utils:
         if len(message) == 0:
             return
 
+        Utils.send_bark_message(notification_configs["bark"], message, **kwargs)
+
         # DingTalk message
         Utils.send_dingtalk_message(notification_configs["dingtalk"], message, **kwargs)
 
@@ -93,6 +95,15 @@ class Utils:
         response = requests.post(url, headers=headers, proxies=proxies, json=content)
         Utils.log("Telegram发送消息状态码：{}".format(response.status_code))
 
+    @staticmethod
+    def send_bark_message(bark_configs, message, **kwargs):
+        if len(bark_configs["url"]) == 0 or len(bark_configs["id"]) == 0:
+            return
+
+        url = "https://{}/{}/{}".format(bark_configs["url"], bark_configs["id"], urllib.parse.quote(message, safe=""))
+        response = requests.get(url)
+        Utils.log("Bark发送消息状态码：{}".format(response.status_code))
+
 
 class AppleStoreMonitor:
     headers = {
@@ -120,7 +131,8 @@ class AppleStoreMonitor:
             "exclude_stores": [],
             "notification_configs": {
                 "dingtalk": {},
-                "telegram": {}
+                "telegram": {},
+                "bark": {}
             },
             "scan_interval": 30,
             "alert_exception": False
@@ -219,6 +231,14 @@ class AppleStoreMonitor:
         notification_configs["telegram"]["bot_token"] = telegram_bot_token
         notification_configs["telegram"]["chat_id"] = telegram_chat_id
         notification_configs["telegram"]["http_proxy"] = telegram_http_proxy
+
+        # config bark notification
+        bark_url = input('输入Bark url[如不配置直接回车即可]：')
+        bark_id = input('输入Bark id[如不配置直接回车即可]：')
+
+        # write dingtalk configs
+        notification_configs["bark"]["url"] = bark_url
+        notification_configs["bark"]["id"] = bark_id
 
         # 输入扫描间隔时间
         print('--------------------')
