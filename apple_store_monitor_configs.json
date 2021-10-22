@@ -28,8 +28,7 @@
       "http_proxy": ""
     },
     "bark": {
-      "url": "",
-      "id": ""
+      "url": ""
     }
   },
   "scan_interval": 30,

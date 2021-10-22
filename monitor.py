@@ -97,11 +97,11 @@ class Utils:
 
     @staticmethod
     def send_bark_message(bark_configs, message, **kwargs):
-        if len(bark_configs["url"]) == 0 or len(bark_configs["id"]) == 0:
+        if len(bark_configs["url"]) == 0:
             return
 
-        url = "https://{}/{}/{}".format(bark_configs["url"], bark_configs["id"], urllib.parse.quote(message, safe=""))
-        response = requests.get(url)
+        url = "{}/{}".format(bark_configs["url"], urllib.parse.quote(message, safe=""))
+        response = requests.post(url)
         Utils.log("Bark发送消息状态码：{}".format(response.status_code))
 
 
@@ -234,11 +234,9 @@ class AppleStoreMonitor:
 
         # config bark notification
         bark_url = input('输入Bark url[如不配置直接回车即可]：')
-        bark_id = input('输入Bark id[如不配置直接回车即可]：')
 
         # write dingtalk configs
         notification_configs["bark"]["url"] = bark_url
-        notification_configs["bark"]["id"] = bark_id
 
         # 输入扫描间隔时间
         print('--------------------')
