@@ -23,12 +23,20 @@
       "secret_key": ""
     },
     "telegram": {
-      "bot_token": "",
       "chat_id": "",
+      "bot_token": "",
       "http_proxy": ""
     },
     "bark": {
-      "url": ""
+      "url": "",
+      "query_parameters": {
+        "url": null,
+        "isArchive": null,
+        "group": null,
+        "icon": null,
+        "automaticallyCopy": null,
+        "copy": null
+      }
     }
   },
   "scan_interval": 30,

@@ -33,13 +33,21 @@ class Utils:
         if len(message) == 0:
             return
 
-        Utils.send_bark_message(notification_configs["bark"], message, **kwargs)
+        # Wrapper for exception caught
+        def invoke(func, configs):
+            try:
+                func(configs, message, **kwargs)
+            except Exception as err:
+                Utils.log(err)
 
         # DingTalk message
-        Utils.send_dingtalk_message(notification_configs["dingtalk"], message, **kwargs)
+        invoke(Utils.send_dingtalk_message, notification_configs["dingtalk"])
+
+        # Bark message
+        invoke(Utils.send_bark_message, notification_configs["bark"])
 
         # Telegram message
-        Utils.send_telegram_message(notification_configs["telegram"], message, **kwargs)
+        invoke(Utils.send_telegram_message, notification_configs["telegram"])
 
     @staticmethod
     def send_dingtalk_message(dingtalk_configs, message, **kwargs):
@@ -101,7 +109,7 @@ class Utils:
             return
 
         url = "{}/{}".format(bark_configs["url"], urllib.parse.quote(message, safe=""))
-        response = requests.post(url)
+        response = requests.post(url, params=bark_configs["query_parameters"])
         Utils.log("Bark发送消息状态码：{}".format(response.status_code))
 
 
@@ -130,13 +138,31 @@ class AppleStoreMonitor:
             "selected_area": "",
             "exclude_stores": [],
             "notification_configs": {
-                "dingtalk": {},
-                "telegram": {},
-                "bark": {}
+                "dingtalk": {
+                    "access_token": "",
+                    "secret_key": ""
+                },
+                "telegram": {
+                    "bot_token": "",
+                    "chat_id": "",
+                    "http_proxy": ""
+                },
+                "bark": {
+                    "url": "",
+                    "query_parameters": {
+                        "url": None,
+                        "isArchive": None,
+                        "group": None,
+                        "icon": None,
+                        "automaticallyCopy": None,
+                        "copy": None
+                    }
+                }
             },
             "scan_interval": 30,
             "alert_exception": False
         }
+
         while True:
             # chose product type
             print('--------------------')
@@ -205,9 +231,10 @@ class AppleStoreMonitor:
         for index, store in enumerate(stores):
             print("[{}] {}，地址：{}".format(index, store["storeName"], store["retailStore"]["address"]["street"]))
 
-        exclude_stores_indexes = input('排除无需监测的直营店，输入序号[直接回车代表全部监测，多个店的序号以空格分隔]：').split(" ")
-        print("已选择的无需监测的直营店：{}".format("，".join(list(map(lambda i: stores[int(i)]["storeName"], exclude_stores_indexes)))))
-        configs["exclude_stores"] = list(map(lambda i: stores[int(i)]["storeNumber"], exclude_stores_indexes))
+        exclude_stores_indexes = input('排除无需监测的直营店，输入序号[直接回车代表全部监测，多个店的序号以空格分隔]：').strip().split()
+        if len(exclude_stores_indexes) != 0:
+            print("已选择的无需监测的直营店：{}".format("，".join(list(map(lambda i: stores[int(i)]["storeName"], exclude_stores_indexes)))))
+            configs["exclude_stores"] = list(map(lambda i: stores[int(i)]["storeNumber"], exclude_stores_indexes))
 
         print('--------------------')
         # config notification configurations
@@ -223,17 +250,18 @@ class AppleStoreMonitor:
 
         # config telegram notification
         print('--------------------')
-        telegram_bot_token = input('输入Telegram机器人Token[如不配置直接回车即可]：')
         telegram_chat_id = input('输入Telegram机器人Chat ID[如不配置直接回车即可]：')
+        telegram_bot_token = input('输入Telegram机器人Token[如不配置直接回车即可]：')
         telegram_http_proxy = input('输入Telegram HTTP代理地址[如不配置直接回车即可]：')
 
         # write telegram configs
-        notification_configs["telegram"]["bot_token"] = telegram_bot_token
         notification_configs["telegram"]["chat_id"] = telegram_chat_id
+        notification_configs["telegram"]["bot_token"] = telegram_bot_token
         notification_configs["telegram"]["http_proxy"] = telegram_http_proxy
 
         # config bark notification
-        bark_url = input('输入Bark url[如不配置直接回车即可]：')
+        print('--------------------')
+        bark_url = input('输入Bark URL[如不配置直接回车即可]：')
 
         # write dingtalk configs
         notification_configs["bark"]["url"] = bark_url

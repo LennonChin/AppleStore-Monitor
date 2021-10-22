@@ -12,6 +12,8 @@
 - [x] 将异常事件的提醒限制在6:00 ~ 23:00期间。
 - [x] 可配置想要排除的直营店。
 - [x] 可配置在程序发生异常时是否发送通知。
+- [x] 增加Bark推送【仅iOS】，感谢[zh616110538](https://github.com/zh616110538)。[【PR #2】](https://github.com/LennonChin/AppleStore-Monitor/pull/2)
+- [x] 修复未选择排除的直营店时出现的异常。
 
 # 安装
 
@@ -26,7 +28,7 @@ cd AppleStore-Monitor
 pip install -r requirements.txt
 ```
 
-# 申请钉钉群机器人
+# 使用钉钉群机器人推送通知
 
 【强烈建议配置】如不配置则没有通知功能。
 
@@ -36,9 +38,13 @@ pip install -r requirements.txt
 
 机器人配置完毕后，记下相关的Access Token和Secret Key，后面配置时需要用到。
 
-# 申请Telegram群机器人
+# 使用Telegram群机器人推送通知
 
 Telegram bot群发功能已添加了，文档暂空。留给有需求的同学自己补充。
+
+# 使用Bark推送通知
+
+Bark仅针对iOS平台的推送，使用比较简单，下载Bark App，在下面的配置过程中输入携带了Key的URL即可。
 
 # 开始配置
 
@@ -47,9 +53,10 @@ Telegram bot群发功能已添加了，文档暂空。留给有需求的同学�
 ```bash
 $> python monitor.py config
 --------------------
-[0] AirPods
-[1] iPhone 13
-选择要监控的产品：0
+[0] Apple Watch
+[1] AirPods
+[2] iPhone 13
+选择要监控的产品：1
 --------------------
 [0] AirPods
 [1] AirPods Max
@@ -60,11 +67,14 @@ $> python monitor.py config
 --------------------
 是否添加更多产品[Enter继续添加，非Enter键退出]：
 --------------------
-[0] AirPods
-[1] iPhone 13
-选择要监控的产品：1
+[0] Apple Watch
+[1] AirPods
+[2] iPhone 13
+选择要监控的产品：2
 --------------------
-...
+[0] iPhone 13 Mini
+[1] iPhone 13
+[2] iPhone 13 Pro
 [3] iPhone 13 Pro Max
 选择要监控的产品子类：3
 --------------------
@@ -112,7 +122,9 @@ $> python monitor.py config
 输入Telegram机器人Chat ID[如不配置直接回车即可]：
 输入Telegram HTTP代理地址[如不配置直接回车即可]：
 --------------------
-输入扫描间隔时间[以秒为单位，默认为30秒，如不配置直接回车即可]：# 不建议太短，以免扫描过于频繁导致IP被封
+输入Bark URL[如不配置直接回车即可]：
+--------------------
+输入扫描间隔时间[以秒为单位，默认为30秒，如不配置直接回车即可]：
 --------------------
 是否在程序异常时发送通知[Y/n，默认为n]：
 --------------------
@@ -148,9 +160,20 @@ $> python monitor.py config
       "secret_key": ""
     },
     "telegram": {
-      "bot_token": "",
       "chat_id": "",
+      "bot_token": "",
       "http_proxy": ""
+    },
+    "bark": {
+      "url": "",
+      "query_parameters": {
+        "url": null,
+        "isArchive": null,
+        "group": null,
+        "icon": null,
+        "automaticallyCopy": null,
+        "copy": null
+      }
     }
   },
   "scan_interval": 30,
@@ -169,13 +192,13 @@ $> python monitor.py config
 比如前台启动：
 
 ```bash
-$> python monitor.py start
+python monitor.py start
 ```
 
 或者后台启动：
 
 ```bash
-$> nohup python -u monitor.py start > monitor.log 2>&1 &
+nohup python -u monitor.py start > monitor.log 2>&1 &
 ```
 
 # 通知效果
@@ -189,6 +212,14 @@ $> nohup python -u monitor.py start > monitor.log 2>&1 &
 
 相关通知截图：
 
+钉钉：
+
 ![DingTalkNotification](https://github.com/LennonChin/AppleStore-Monitor/blob/main/docs/DingTalkNotification.png)
 
+Telegram：
+
 ![TelegramNotification](https://github.com/LennonChin/AppleStore-Monitor/blob/main/docs/TelegramNotification.png)
+
+Bark：
+
+![BarkNotification](https://github.com/LennonChin/AppleStore-Monitor/blob/main/docs/BarkNotification.png)
