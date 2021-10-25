@@ -125,6 +125,7 @@ class AppleStoreMonitor:
 
     def __init__(self):
         self.count = 1
+        self.timeout = 10
 
     @staticmethod
     def config():
@@ -321,7 +322,8 @@ class AppleStoreMonitor:
 
                 response = requests.get("https://www.apple.com.cn/shop/fulfillment-messages",
                                         headers=AppleStoreMonitor.headers,
-                                        params=params)
+                                        params=params,
+                                        timeout=self.timeout)
 
                 json_result = json.loads(response.text)
                 stores = json_result['body']['content']['pickupMessage']['stores']
