@@ -363,7 +363,7 @@ class AppleStoreMonitor:
                                        Utils.time_title("第{}次扫描出现异常：{}".format(self.count, repr(err))))
 
             if len(available_list) == 0:
-                interval = max(random.randint(int(scan_interval / 2), scan_interval * 2), 5)
+                interval = max(random.randint(int(scan_interval / 2), scan_interval * 2), 1)
                 Utils.log('{}秒后进行第{}次尝试...'.format(interval, self.count))
 
                 # 整点通知，用于阶段性检测应用是否正常
