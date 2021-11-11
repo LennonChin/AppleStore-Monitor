@@ -1,0 +1,403 @@
+{
+  "isToday": true,
+  "launchDate": {
+      "zh_MO": "2021 年 10 月 8 日星期五"
+  },
+  "preLaunchStartDate": {
+      "zh_MO": "2021 年 9 月 2 日星期四"
+  },
+  "updated": 1636554990148,
+  "preLaunchStartTime": {
+      "zh_MO": "00:00"
+  },
+  "stores": {
+      "R697": {
+          "MLH43ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLT73ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHK3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHH3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTE3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHC3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLH93ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHL3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLH63ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHF3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTH3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHE3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTK3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLH53ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTN3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTG3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHD3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTD3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTM3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHJ3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHA3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLH83ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLT83ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTJ3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLT53ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLT63ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTL3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTC3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLH73ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLT93ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTF3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHG3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          }
+      },
+      "R672": {
+          "MLH43ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLT73ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHK3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHH3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTE3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHC3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLH93ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHL3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLH63ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHF3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTH3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHE3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTK3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLH53ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTN3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTG3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHD3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTD3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTM3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHJ3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHA3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLH83ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLT83ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTJ3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLT53ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLT63ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTL3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTC3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLH73ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLT93ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLTF3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          },
+          "MLHG3ZA/A": {
+              "availability": {
+                  "contract": false,
+                  "unlocked": false
+              }
+          }
+      }
+  }
+}

@@ -116,7 +116,7 @@ class Utils:
 class AppleStoreMonitor:
     headers = {
         'sec-ch-ua': '"Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"',
-        'Referer': 'https://www.apple.com.cn/store',
+        'Referer': 'https://www.apple.com/mo/store',
         'DNT': '1',
         'sec-ch-ua-mobile': '?0',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36',
@@ -286,14 +286,17 @@ class AppleStoreMonitor:
         :return:
         """
         print('--------------------')
-        print('启动监控...')
+        print('【澳门】启动监控...')
         print('--------------------')
-        self.start_cn()
-    def start_cn(self):
+        self.start()
+    def start(self):
         """
-        开始监控大陆苹果商店
+        开始监控澳门苹果商店
         """
         configs = json.load(open('apple_store_monitor_configs.json', encoding='utf-8'))
+        product_mo = json.load(open('products_mo.json', encoding='utf-8'))
+
+
         selected_products = configs["selected_products"]
         selected_area = configs["selected_area"]
         exclude_stores = configs["exclude_stores"]
@@ -304,9 +307,12 @@ class AppleStoreMonitor:
         products_info = []
         for index, product_info in enumerate(selected_products.items()):
             products_info.append("【{}】{}".format(index, " ".join(product_info[1])))
-        message = "准备开始监测，商品信息如下：\n{}\n取货区域：{}\n扫描频次：{}秒/次".format("\n".join(products_info), selected_area,
+        
+        message = "【澳门】准备开始监测，商品信息如下：\n{}\n取货区域：{}\n扫描频次：{}秒/次".format("\n".join(products_info), selected_area,
                                                                    scan_interval)
         Utils.log(message)
+
+        # telegram
         Utils.send_message(notification_configs, message)
 
         params = {
@@ -329,34 +335,38 @@ class AppleStoreMonitor:
                 # 更新请求时间
                 params["_"] = int(time.time() * 1000)
 
-                response = requests.get("https://www.apple.com.cn/shop/fulfillment-messages",
+                response = requests.get("https://reserve-prime.apple.com/MO/zh_MO/reserve/A/availability.json",
                                         headers=AppleStoreMonitor.headers,
-                                        params=params,
+                                        # params=params,
                                         timeout=self.timeout)
 
+                # print(response, response.text)
                 json_result = json.loads(response.text)
-                stores = json_result['body']['content']['pickupMessage']['stores']
+                stores = json_result['stores']
+                
+                print('澳门店铺：', stores.keys())
                 Utils.log(
                     '-------------------- 第{}次扫描 --------------------'.format(
                         self.count + 1))
-                for item in stores:
-                    store_name = item['storeName']
-                    if item["storeNumber"] in exclude_stores:
-                        print("【{}：已排除】".format(store_name))
-                        continue
-                    print("{:-<100}".format("【{}】".format(store_name)))
-                    for product_code in product_codes:
-                        pickup_search_quote = item['partsAvailability'][product_code]['pickupSearchQuote']
-                        pickup_display = item['partsAvailability'][product_code]['pickupDisplay']
-                        store_pickup_product_title = item['partsAvailability'][product_code]['storePickupProductTitle']
-                        print('\t【{}】{}'.format(pickup_search_quote, store_pickup_product_title))
-                        if pickup_search_quote == '今天可取货' or pickup_display != 'unavailable':
-                            available_list.append((store_name, product_code, store_pickup_product_title))
+                for store in stores.keys():
+                    
+                    print("{:-<100}".format("【{}】".format(store)))
+                    
+                    for item in stores[store].keys():
+                        model = product_mo['iPhone13PM'].get(item, 'null')
+                        unlocked = stores[store][item]['availability']['unlocked']
+
+                        print('{} - {}[{}]: {}'.format(store, item, model, unlocked))
+
+                        if unlocked == True:
+                            available_list.append((store, item, model, unlocked))
+                        
+                    
 
                 if len(available_list) > 0:
                     messages = []
                     print("命中货源，请注意 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-                    Utils.log("以下直营店预约可用：")
+                    Utils.log("以下【澳门直营店】预约可用：")
                     for item in available_list:
                         messages.append("【{}】 {}".format(item[0], item[2]))
                         print("【{}】{}".format(item[0], item[2]))
@@ -364,7 +374,7 @@ class AppleStoreMonitor:
 
                     Utils.send_message(notification_configs,
                                        Utils.time_title(
-                                           "第{}次扫描到直营店有货，信息如下：\n{}".format(self.count, "\n".join(messages))))
+                                           "第{}次扫描到【澳门直营店】有货，信息如下：\n{}".format(self.count, "\n".join(messages))))
 
             except Exception as err:
                 Utils.log(err)
@@ -389,8 +399,18 @@ class AppleStoreMonitor:
             # 次数自增
             self.count += 1
 
-    def start_mo(self):
-        product_cfgs = json.load(open('products_mo.json', encoding='utf-8'))
+    def start_test(self):
+        product_mo = json.load(open('products_mo.json', encoding='utf-8'))
+        stores_mo = json.load(open('stores_mo.json', encoding='utf-8'))
+        print(stores_mo.keys())
+        stores = stores_mo['stores']
+        print('澳门店铺：', stores.keys())
+
+        for store in stores.keys():
+            print(store)
+            for item in stores[store].keys():
+                model = product_mo['iPhone13PM'].get(item, 'null')
+                print('{} - {}[{}]: {}'.format(store, item, model, stores[store][item]['availability']['unlocked']))
         
 
 if __name__ == '__main__':

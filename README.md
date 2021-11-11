@@ -191,6 +191,11 @@ $> python monitor.py config
 
 比如前台启动：
 
+设置配置文件
+```bash
+cp apple_store_monitor_configs.default.json apple_store_monitor_configs.json
+```
+
 ```bash
 python monitor.py start
 ```
@@ -198,7 +203,8 @@ python monitor.py start
 或者后台启动：
 
 ```bash
-nohup python -u monitor.py start > monitor.log 2>&1 &
+nohup python3 -u monitor.py start > monitor.log 2>&1 &
+nohup python3 -u monitor_mo.py start > monitor_mo.log 2>&1 &
 ```
 
 # 通知效果

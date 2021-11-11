@@ -130,3 +130,4 @@ dmypy.json
 
 # IDE
 .idea/
+./apple_store_monitor_configs.json
