@@ -108,7 +108,7 @@ class Utils:
         if len(bark_configs["url"]) == 0:
             return
 
-        url = "{}/{}".format(bark_configs["url"], urllib.parse.quote(message, safe=""))
+        url = "{}/{}".format(bark_configs["url"].strip("/"), urllib.parse.quote(message, safe=""))
         response = requests.post(url, params=bark_configs["query_parameters"])
         Utils.log("Bark发送消息状态码：{}".format(response.status_code))
 
@@ -339,7 +339,7 @@ class AppleStoreMonitor:
                     for product_code in product_codes:
                         pickup_search_quote = item['partsAvailability'][product_code]['pickupSearchQuote']
                         pickup_display = item['partsAvailability'][product_code]['pickupDisplay']
-                        store_pickup_product_title = item['partsAvailability'][product_code]['storePickupProductTitle']
+                        store_pickup_product_title = item['partsAvailability'][product_code]['messageTypes']['regular']['storePickupProductTitle']
                         print('\t【{}】{}'.format(pickup_search_quote, store_pickup_product_title))
                         if pickup_search_quote == '今天可取货' or pickup_display != 'unavailable':
                             available_list.append((store_name, product_code, store_pickup_product_title))
