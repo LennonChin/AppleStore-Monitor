@@ -223,3 +223,8 @@ Telegram：
 Bark：
 
 ![BarkNotification](https://github.com/LennonChin/AppleStore-Monitor/blob/main/docs/BarkNotification.png)
+
+## 免责声明
+
+1. 本项目仅用于学习研究，禁止任何人用于商业及非法用途，如产生法律纠纷与本人无关。
+2. 本项目为开源项目，若相关公司有异议，请邮件联系作者，作者收到邮件后会及时处理。
