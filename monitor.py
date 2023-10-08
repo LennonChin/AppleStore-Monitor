@@ -4,7 +4,7 @@
 @Contact: i@coderap.com
 @Date: 2021-10-19
 """
-
+import re
 import sys
 import os
 import random
@@ -16,6 +16,9 @@ import hmac
 import hashlib
 import base64
 import urllib.parse
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 
 class Utils:
@@ -23,6 +26,10 @@ class Utils:
     @staticmethod
     def time_title(message):
         return "[{}] {}".format(datetime.datetime.now().strftime('%H:%M:%S'), message)
+
+    @staticmethod
+    def subject_title(subject, message):
+        return "<{}>\n[{}] {}".format(subject, datetime.datetime.now().strftime('%H:%M:%S'), message)
 
     @staticmethod
     def log(message):
@@ -48,6 +55,9 @@ class Utils:
 
         # Telegram message
         invoke(Utils.send_telegram_message, notification_configs["telegram"])
+
+        # Email message
+        invoke(Utils.send_email_message, notification_configs["email"])
 
     @staticmethod
     def send_dingtalk_message(dingtalk_configs, message, **kwargs):
@@ -80,6 +90,37 @@ class Utils:
 
         response = requests.post("https://oapi.dingtalk.com/robot/send", headers=headers, params=params, json=content)
         Utils.log("Dingtalk发送消息状态码：{}".format(response.status_code))
+
+    @staticmethod
+    def send_email_message(configs, message, **kwargs):
+        if configs["to_email"]:
+            try:
+                # 创建一个MIMEMultipart对象来表示邮件
+                msg = MIMEMultipart()
+                msg['From'] = configs["smtp_username"]
+                msg['To'] = configs["to_email"]
+                title_parse = re.search(r"\<(.*?)>([\S\s]*)", message)
+                msg['Subject'] = title_parse and title_parse.group(1) or "Apple Store监控通知"
+                message = title_parse and title_parse.group(2) or ""
+                # 添加邮件正文
+                msg.attach(MIMEText(message, 'plain'))
+
+                # 创建SMTP客户端
+                server = smtplib.SMTP(configs["smtp_server"], configs["smtp_port"])
+                server.starttls()  # 启用TLS加密，如果需要的话
+
+                # 登录到SMTP服务器
+                server.login(configs["smtp_username"], configs["smtp_password"])
+
+                # 发送邮件
+                server.sendmail(configs["smtp_username"], configs["to_email"], msg.as_string())
+
+                # 关闭SMTP客户端连接
+                server.quit()
+
+                Utils.log("邮件发送成功！")
+            except Exception as e:
+                Utils.log("邮件发送失败:{}".format(str(e)))
 
     @staticmethod
     def send_telegram_message(telegram_configs, message, **kwargs):
@@ -126,6 +167,8 @@ class AppleStoreMonitor:
     def __init__(self):
         self.count = 1
         self.timeout = 10
+        self.history = []
+        self.alter_swc = True
 
     @staticmethod
     def config():
@@ -158,10 +201,18 @@ class AppleStoreMonitor:
                         "automaticallyCopy": None,
                         "copy": None
                     }
+                },
+                "email": {
+                    "to_email": "",
+                    "smtp_server": "",
+                    "smtp_port": "",
+                    "smtp_username": "",
+                    "smtp_password": ""
                 }
             },
             "scan_interval": 30,
-            "alert_exception": False
+            "alert_exception": False,
+            "always_alert": False
         }
 
         while True:
@@ -267,9 +318,29 @@ class AppleStoreMonitor:
         # write dingtalk configs
         notification_configs["bark"]["url"] = bark_url
 
+        # config email notification
+        print('--------------------')
+        to_email = input('输入邮件接收地址[如不配置直接回车即可]：')
+        if to_email is not None:
+            smtp_server = input('输入邮件服务器[如不清楚建议百度]：')
+            smtp_port = input('输入邮件服务器端口号：')
+            smtp_username = input('输入发件人用户名：')
+            smtp_password = input('输入发件人密码：')
+
+            # write email configs
+            notification_configs["email"]["to_email"] = to_email
+            notification_configs["email"]["smtp_server"] = smtp_server
+            notification_configs["email"]["smtp_port"] = smtp_port
+            notification_configs["email"]["smtp_username"] = smtp_username
+            notification_configs["email"]["smtp_password"] = smtp_password
+
         # 输入扫描间隔时间
         print('--------------------')
         configs["scan_interval"] = int(input('输入扫描间隔时间[以秒为单位，默认为30秒，如不配置直接回车即可]：') or 30)
+
+        # 有货时是否重复提醒
+        print('--------------------')
+        configs["always_alert"] = (input('有货时是否重复提醒[Y/n，默认为n]：').lower().strip() or "n") == "y"
 
         # 是否对异常进行告警
         print('--------------------')
@@ -291,12 +362,15 @@ class AppleStoreMonitor:
         notification_configs = configs["notification_configs"]
         scan_interval = configs["scan_interval"]
         alert_exception = configs["alert_exception"]
+        always_alert = configs["always_alert"]
 
         products_info = []
         for index, product_info in enumerate(selected_products.items()):
             products_info.append("【{}】{}".format(index, " ".join(product_info[1])))
-        message = "准备开始监测，商品信息如下：\n{}\n取货区域：{}\n扫描频次：{}秒/次".format("\n".join(products_info), selected_area,
-                                                                   scan_interval)
+        message = Utils.subject_title("Apple Store监控开始通知",
+                                      "准备开始监测，商品信息如下：\n{}\n取货区域：{}\n扫描频次：{}秒/次".format(
+                                          "\n".join(products_info), selected_area,
+                                          scan_interval))
         Utils.log(message)
         Utils.send_message(notification_configs, message)
 
@@ -343,26 +417,47 @@ class AppleStoreMonitor:
                         print('\t【{}】{}'.format(pickup_search_quote, store_pickup_product_title))
                         if pickup_search_quote == '今天可取货' or pickup_display != 'unavailable':
                             available_list.append((store_name, product_code, store_pickup_product_title))
-
                 if len(available_list) > 0:
                     messages = []
                     print("命中货源，请注意 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
                     Utils.log("以下直营店预约可用：")
+                    available_stores = []
                     for item in available_list:
                         messages.append("【{}】 {}".format(item[0], item[2]))
+                        available_stores.append(item[0])
                         print("【{}】{}".format(item[0], item[2]))
-                    print("命中货源，请注意 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-
-                    Utils.send_message(notification_configs,
-                                       Utils.time_title(
-                                           "第{}次扫描到直营店有货，信息如下：\n{}".format(self.count, "\n".join(messages))))
+                    print(
+                        "命中货源，请注意 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+                    if always_alert or self.alter_swc:
+                        Utils.send_message(notification_configs,
+                                           Utils.subject_title(
+                                               "{}有货通知".format(available_stores),
+                                               "第{}次扫描到直营店有货，信息如下：\n{}".format(self.count,
+                                                                                             "\n".join(messages))))
+                    self.alter_swc = False
+                    self.history.append(datetime.datetime.now())
+                else:
+                    if not self.alter_swc:
+                        not_available_time = datetime.datetime.now()
+                        time_diff = not_available_time - self.history[-1]
+                        hours = time_diff.seconds // 3600
+                        minutes = (time_diff.seconds % 3600) // 60
+                        seconds = time_diff.seconds % 60
+                        Utils.send_message(notification_configs,
+                                           Utils.subject_title(
+                                               "监测的货物已售罄！",
+                                               "本次放货时间:{}\n售罄时间:{}\n共持续:{}{}{}"
+                                               .format(available_time.strftime("%Y年%m月%d日 %H:%M:%S"), not_available_time.strftime("%Y年%m月%d日 %H:%M:%S"),
+                                                       hours and str(hours) + "小时" or "", minutes and str(minutes) + "分" or "", seconds and str(seconds) + "秒" or "")))
+                    self.alter_swc = True
 
             except Exception as err:
                 Utils.log(err)
                 # 6:00 ~ 23:00才发送异常消息
                 if alert_exception and 6 <= tm_hour <= 23:
                     Utils.send_message(notification_configs,
-                                       Utils.time_title("第{}次扫描出现异常：{}".format(self.count, repr(err))))
+                                       Utils.subject_title("Apple Store监控异常通知",
+                                                           "第{}次扫描出现异常：{}".format(self.count, repr(err))))
 
             if len(available_list) == 0:
                 interval = max(random.randint(int(scan_interval / 2), scan_interval * 2), 5)
@@ -371,7 +466,10 @@ class AppleStoreMonitor:
                 # 整点通知，用于阶段性检测应用是否正常
                 if last_exactly_time != tm_hour and (6 <= tm_hour <= 23):
                     Utils.send_message(notification_configs,
-                                       Utils.time_title("已扫描{}次，扫描程序运行正常".format(self.count)))
+                                       Utils.subject_title("Apple Store监控运行通知",
+                                                           "已扫描{}次，扫描程序运行正常，目前所检测的商品{}".format(
+                                                               self.count,
+                                                               self.alter_swc and "无货" or "有货，请尽快前往下单")))
                     last_exactly_time = tm_hour
                 time.sleep(interval)
             else:
