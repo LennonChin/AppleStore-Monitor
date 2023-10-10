@@ -429,13 +429,13 @@ class AppleStoreMonitor:
                     print(
                         "命中货源，请注意 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
                     if always_alert or self.alter_swc:
+                        self.history.append(datetime.datetime.now())
                         Utils.send_message(notification_configs,
                                            Utils.subject_title(
                                                "{}有货通知".format(available_stores),
                                                "第{}次扫描到直营店有货，信息如下：\n{}".format(self.count,
                                                                                              "\n".join(messages))))
                     self.alter_swc = False
-                    self.history.append(datetime.datetime.now())
                 else:
                     if not self.alter_swc:
                         not_available_time = datetime.datetime.now()
@@ -447,7 +447,7 @@ class AppleStoreMonitor:
                                            Utils.subject_title(
                                                "监测的货物已售罄！",
                                                "本次放货时间:{}\n售罄时间:{}\n共持续:{}{}{}"
-                                               .format(available_time.strftime("%Y年%m月%d日 %H:%M:%S"), not_available_time.strftime("%Y年%m月%d日 %H:%M:%S"),
+                                               .format(self.history[-1].strftime("%Y年%m月%d日 %H:%M:%S"), not_available_time.strftime("%Y年%m月%d日 %H:%M:%S"),
                                                        hours and str(hours) + "小时" or "", minutes and str(minutes) + "分" or "", seconds and str(seconds) + "秒" or "")))
                     self.alter_swc = True
 
