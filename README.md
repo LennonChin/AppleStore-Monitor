@@ -14,6 +14,8 @@
 - [x] 可配置在程序发生异常时是否发送通知。
 - [x] 增加Bark推送【仅iOS】，感谢[zh616110538](https://github.com/zh616110538)。[【PR #2】](https://github.com/LennonChin/AppleStore-Monitor/pull/2)
 - [x] 修复未选择排除的直营店时出现的异常。
+- [x] 增加邮件通知，配合iOS快捷指令可完成闹钟、拨打电话的功能。
+- [x] 可配置在有货时重复发送通知
 
 # 安装
 
